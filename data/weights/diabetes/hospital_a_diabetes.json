@@ -1,0 +1,43 @@
+{
+    "model": "logistic_regression",
+    "hospital": "Hospital A",
+    "features": [
+        "age",
+        "hypertension",
+        "bmi",
+        "HbA1c_level",
+        "blood_glucose_level",
+        "gender_Female",
+        "gender_Male",
+        "gender_Other",
+        "smoking_history_current",
+        "smoking_history_ever",
+        "smoking_history_former",
+        "smoking_history_never",
+        "smoking_history_not current"
+    ],
+    "coef": [
+        [
+            0.04837230005333816,
+            0.8130686170871878,
+            0.08298941258941776,
+            1.9352485479862176,
+            0.02920499770976511,
+            -5.9015655960031035,
+            -5.688771770151673,
+            -1.6352094260465104,
+            -2.7022068373579025,
+            -2.5280189163124525,
+            -2.562736023606748,
+            -2.7030468089015987,
+            -2.7295382060237414
+        ]
+    ],
+    "intercept": [
+        -13.225546792205536
+    ],
+    "classes": [
+        0,
+        1
+    ]
+}

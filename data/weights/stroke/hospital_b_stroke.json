@@ -1,0 +1,51 @@
+{
+    "model": "logistic_regression",
+    "hospital": "Hospital B",
+    "features": [
+        "Chest Pain",
+        "Shortness of Breath",
+        "Irregular Heartbeat",
+        "Fatigue & Weakness",
+        "Dizziness",
+        "Swelling (Edema)",
+        "Pain in Neck/Jaw/Shoulder/Back",
+        "Excessive Sweating",
+        "Persistent Cough",
+        "Nausea/Vomiting",
+        "High Blood Pressure",
+        "Chest Discomfort (Activity)",
+        "Cold Hands/Feet",
+        "Snoring/Sleep Apnea",
+        "Anxiety/Feeling of Doom",
+        "Age",
+        "Stroke Risk (%)"
+    ],
+    "coef": [
+        [
+            -3.582648373122978,
+            -3.457912316400815,
+            -3.393686647073378,
+            -3.414991807820571,
+            -3.3771131946527007,
+            -3.543893367580608,
+            -3.4431804036984843,
+            -3.4743733185677703,
+            -3.432329432216616,
+            -3.419872552773936,
+            -3.353976916780248,
+            -3.515813341089041,
+            -3.4634792686836047,
+            -3.443626477793031,
+            -3.346465763189027,
+            -0.34232615657108767,
+            1.3856114183715817
+        ]
+    ],
+    "intercept": [
+        -28.874878589841682
+    ],
+    "classes": [
+        0,
+        1
+    ]
+}

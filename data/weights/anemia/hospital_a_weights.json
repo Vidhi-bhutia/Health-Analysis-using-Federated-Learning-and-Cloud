@@ -1,0 +1,27 @@
+{
+  "model": "logistic_regression",
+  "hospital": "Hospital A",
+  "features": [
+    "Gender",
+    "Hemoglobin",
+    "MCH",
+    "MCHC",
+    "MCV"
+  ],
+  "coef": [
+    [
+      4.364891793178529,
+      -2.8494951353598243,
+      0.07495097463765729,
+      0.9305126871400395,
+      0.04270902023236389
+    ]
+  ],
+  "intercept": [
+    1.1968031858006363
+  ],
+  "classes": [
+    0,
+    1
+  ]
+}

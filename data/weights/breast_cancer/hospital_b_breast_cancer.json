@@ -1,0 +1,27 @@
+{
+    "model": "logistic_regression",
+    "hospital": "Hospital B",
+    "features": [
+        "mean_radius",
+        "mean_texture",
+        "mean_perimeter",
+        "mean_area",
+        "mean_smoothness"
+    ],
+    "coef": [
+        [
+            2.775508307658077,
+            -0.17280353529886003,
+            -0.23619914540209574,
+            -0.022802297275178452,
+            -0.1429691060724954
+        ]
+    ],
+    "intercept": [
+        0.40420555494906285
+    ],
+    "classes": [
+        0,
+        1
+    ]
+}
