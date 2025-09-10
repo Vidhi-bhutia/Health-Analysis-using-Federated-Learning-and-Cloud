@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ disease }} Prediction</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body style="background-image: url('{{ url_for('static', filename='img/image2.jpg') }}')">
+
+  <div class="form-container">
+    <a href="{{ url_for('dashboard') }}" class="back-btn">← Back</a>
+    <h2>{{ disease }}</h2>
+    <p>Complete the form below to get a prediction</p>
+
+    <form method="POST">
+      {% for feature in features %}
+        <input type="text" name="{{ feature }}" placeholder="{{ feature }}">
+      {% endfor %}
+
+      <div class="form-buttons">
+        <button type="reset" class="reset-btn">Reset</button>
+        <button type="submit" class="predict-btn">Predict</button>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>

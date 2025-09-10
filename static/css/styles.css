@@ -1,0 +1,171 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-size: cover;
+  background-position: center;
+  color: white;
+  height: 100vh; /* full screen height */
+  display: flex;
+  align-items: center;  /* vertical center */
+  justify-content: center; /* horizontal center */
+}
+
+/* Dashboard hero */
+.hero {
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 40px;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+/* Disease row */
+.disease-row {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: nowrap; /* force single row */
+}
+
+.disease-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 200px;   /* smaller so all fit in one row */
+  height: 100px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 18px;
+  background: rgba(255, 255, 255, 0.1); /* light overlay */
+  box-shadow: 0 8px 20px rgba(3, 11, 20, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  flex-shrink: 0;
+}
+
+.disease-box:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-4px);
+}
+
+/* Form Page */
+.form-container {
+  background: rgba(0, 0, 0, 0.2); /* translucent dark */
+  backdrop-filter: blur(12px); /* glass effect */
+  -webkit-backdrop-filter: blur(12px);
+  width: 750px;
+  padding: 30px 40px;
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Back button */
+.back-btn {
+  display: inline-block;
+  margin-bottom: 20px;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Heading */
+.form-container h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.form-container p {
+  margin-bottom: 16px;
+  font-size: 20px;
+  color: hsl(0, 0%, 100%);
+}
+
+/* Form grid layout (two columns) */
+.form-container form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 24px;
+}
+
+/* Inputs */
+.form-container input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 15px;
+}
+
+.form-container input::placeholder {
+  color: #fffefed8;
+}
+
+/* Button container (full row, right aligned) */
+.form-buttons {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 15px;
+  gap: 12px;
+}
+
+/* Buttons */
+.reset-btn,
+.predict-btn {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.reset-btn {
+  background: #555;
+  color: white;
+}
+
+.reset-btn:hover {
+  background: #666;
+}
+
+.predict-btn {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  color: white;
+}
+
+.predict-btn:hover {
+  opacity: 0.9;
+}
+/* Result Page */
+.result-container {
+  text-align: center;
+  margin-top: 150px;
+}
+
+.result-container h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.result-container p {
+  font-size: 20px;
+}
+
+.back-btn {
+  display: inline-block;
+  margin-top: 20px;
+  color: white;
+  text-decoration: none;
+}
+

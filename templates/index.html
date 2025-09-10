@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Disease Prediction Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body style="background-image: url('{{ url_for('static', filename='img/image41.jpg') }}')">
+
+  <div class="hero">
+    <h1>Your Health, Our Analysis</h1>
+    <div class="disease-row">
+      {% for disease in diseases %}
+        <a href="{{ url_for('form', disease=disease) }}" class="disease-box">{{ disease }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+</body>
+</html>
