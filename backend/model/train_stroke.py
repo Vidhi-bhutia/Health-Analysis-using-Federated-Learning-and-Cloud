@@ -42,7 +42,7 @@ for hospital in HOSPITALS:
         "classes": model.classes_.tolist()
     }
 
-    file_path = os.path.join(WEIGHT_DIR, f"{hospital.lower().replace(' ', '_')}_stroke.json")
+    file_path = os.path.join(WEIGHT_DIR, f"{hospital.lower().replace(' ', '_')}_weights.json")
     with open(file_path, "w") as f:
         json.dump(weights, f, indent=4)
 
