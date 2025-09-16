@@ -49,8 +49,6 @@ This project demonstrates federated learning for health data analysis across mul
 └── myenv/                      # (Optional) Python virtual environment
 ```
 
----
-
 ## Setup Instructions
 
 1. **Clone the repository:**
@@ -70,8 +68,6 @@ This project demonstrates federated learning for health data analysis across mul
 	 pip install -r requirements.txt
 	 ```
 
----
-
 ## Data Preparation
 
 1. Place your raw CSV files for each disease in the `data/raw/` directory. The expected filenames are:
@@ -86,8 +82,6 @@ This project demonstrates federated learning for health data analysis across mul
 	 python backend/constants/split.py
 	 ```
 	 This will create `data/hospital/Hospital A/`, `Hospital B/`, and `Hospital C/` folders with disease-specific CSVs.
-
----
 
 ## Model Training Scripts
 
@@ -135,8 +129,6 @@ Each script in `backend/model/` trains a logistic regression model for a specifi
 	python backend/model/train_stroke.py
 	```
 
----
-
 ## Flask Web App
 
 - **`app.py`**: Main Flask application. Provides a dashboard, disease selection, input forms, and displays prediction results.
@@ -152,8 +144,6 @@ python app.py
 ```
 Then open [http://127.0.0.1:5000/](http://127.0.0.1:5000/) in your browser.
 
----
-
 ## Data Splitting Script
 
 ### `split.py`
@@ -165,16 +155,12 @@ Then open [http://127.0.0.1:5000/](http://127.0.0.1:5000/) in your browser.
 	python backend/constants/split.py
 	```
 
----
-
 ## Weights and Outputs
 
 - After running the training scripts, model weights for each hospital and disease are saved as JSON files in the `data/weights/` directory, e.g.:
 	- `data/weights/anemia/hospital_a_weights.json`
 	- `data/weights/asthma/hospital_b_weights.json`
 	- ...etc.
-
----
 
 ## Requirements
 
@@ -184,8 +170,6 @@ See `requirements.txt` for all dependencies. Main packages:
 - numpy
 - Flask
 - jupyter (optional, for experiments)
-
----
 
 ## License
 
