@@ -5,10 +5,13 @@
   <title>Disease Prediction Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
-<body style="background-image: url('{{ url_for('static', filename='img/image41.jpg') }}')">
+<body style="background-image: url('{{ url_for('static', filename='img/image2.jpg') }}')">
 
   <div class="hero">
-    <h1>Your Health, Our Analysis</h1>
+    <div class="hero-heading">
+      <h1>Your Health, Our Analysis</h1>
+      <img src="{{ url_for('static', filename='img/icon.png') }}" alt="Dashboard Icon" class="hero-icon">
+    </div>
     <div class="disease-row">
       {% for disease in diseases %}
         <a href="{{ url_for('form', disease=disease) }}" class="disease-box">{{ disease }}</a>

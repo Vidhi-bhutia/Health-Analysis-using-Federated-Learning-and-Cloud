@@ -169,3 +169,24 @@ body {
   text-decoration: none;
 }
 
+/* Hero heading with icon */
+.hero-heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;  /* space between text and icon */
+  margin-bottom: 40px;
+}
+
+.hero-heading h1 {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #ffffff;
+  margin: 0;
+}
+
+.hero-icon {
+  width: 200px;   /* adjustable size */
+  height: auto;
+}
