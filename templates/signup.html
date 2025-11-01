@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <script>
+    function toggleAdminCode(selectEl) {
+      const role = selectEl.value;
+      const adminCodeRow = document.getElementById('admin-code-row');
+      if (role === 'admin') {
+        adminCodeRow.style.display = 'block';
+      } else {
+        adminCodeRow.style.display = 'none';
+      }
+    }
+  </script>
+</head>
+<body class="auth-page" style="background-image: url('https://images.unsplash.com/photo-1579548122080-c35fd6820ecb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2ViJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000'); background-size: cover; background-position: center;">
+  <div class="auth-split">
+    <div class="auth-left">
+      <h1>Great choice to sign up</h1>
+      <p>Create your account to explore AI-powered tips, make predictions, and get appointments scheduled with ease.</p>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card-glass">
+        <a href="{{ url_for('welcome') }}" class="back-btn">← Back</a>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <img src="{{ url_for('static', filename='img/icon.png') }}" alt="logo" style="width:36px;height:36px;border-radius:8px">
+          <div>
+            <div class="auth-title">Create your secure account</div>
+            <div class="auth-subtitle">Start your AI-powered health journey today</div>
+          </div>
+        </div>
+        {% if message %}
+          <p class="{% if success %}auth-note{% else %}auth-alert{% endif %}">{{ message }}</p>
+        {% endif %}
+        {% if not success %}
+        <form method="POST">
+          <input type="email" name="email" placeholder="Email" required>
+          <input type="password" name="password" placeholder="Password" required>
+          <select name="role" required onchange="toggleAdminCode(this)">
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div id="admin-code-row" style="display:none">
+            <input type="text" name="admin_code" placeholder="Admin Code">
+          </div>
+          <div class="auth-actions">
+            <a href="{{ url_for('login') }}" class="btn auth-secondary">I have an account</a>
+            <button type="submit" class="btn auth-primary">Sign Up</button>
+          </div>
+        </form>
+        {% else %}
+        <div class="auth-actions" style="justify-content:flex-end">
+          <a href="{{ url_for('login') }}" class="btn auth-primary" style="text-decoration:none">Go to Login</a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+

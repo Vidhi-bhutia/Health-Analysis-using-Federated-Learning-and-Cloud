@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="landing-bg" style="background-image: url('https://images.unsplash.com/photo-1699891730676-037bed3c1bed?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2Vic2l0ZSUyMGJhY2tncm91bmR8ZW58MHx8MHx8fDA%3D&fm=jpg&q=60&w=3000'); background-size: cover; background-position: center;">
+  <div class="landing">
+    <div class="landing-left">
+      <!-- <a href="{{ url_for('dashboard') }}" class="back-btn" style="opacity:.85">Skip to Dashboard →</a> -->
+      <h1>Welcome to the Future of Healthcare</h1>
+      <h2>Your health companion, powered by AI</h2>
+      <p>Predict risks, get doctor-style tips, and schedule appointments - all in one place.</p>
+      <div class="landing-cta">
+        <a href="{{ url_for('login') }}" class="btn primary">Login</a>
+        <a href="{{ url_for('signup') }}" class="btn secondary">Create account</a>
+      </div>
+      <div class="landing-trust">
+        <img src="{{ url_for('static', filename='img/icon.png') }}" alt="Health AI"/>
+        <span>Secure. Private. Hospital-grade insights.</span>
+      </div>
+    </div>
+    <div class="landing-right">
+      <img src="https://pngimg.com/d/doctor_PNG16015.png" alt="Hero" />
+    </div>
+  </div>
+</body>
+</html>
+
+

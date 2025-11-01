@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Contact Hospital</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .contact-page {
+      min-height: 100vh;
+      background-image: url('https://plus.unsplash.com/premium_photo-1661423762612-e8fae810cb4b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG9zcGl0YWwlMjBwYXRpZW50c3xlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+    .contact-page::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .contact-container {
+      width: min(700px, 95vw);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 1;
+    }
+    .contact-header {
+      margin-bottom: 24px;
+    }
+    .contact-header h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 8px 0;
+    }
+    .contact-header p {
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      color: #555;
+      margin: 0;
+    }
+    .alert {
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+    }
+    .alert-success {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border: 1px solid #c8e6c9;
+    }
+    .alert-error {
+      background: #ffebee;
+      color: #c62828;
+      border: 1px solid #ffcdd2;
+    }
+    .contact-container form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .contact-container input,
+    .contact-container select {
+      padding: 14px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      transition: all 0.2s;
+      background: #fff;
+      color: #1a1a1a;
+    }
+    .contact-container input:focus,
+    .contact-container select:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .contact-container input[style*="grid-column: span 2"] {
+      grid-column: span 2;
+    }
+    .contact-buttons {
+      grid-column: span 2;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .reset-btn-contact, .submit-btn-contact {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .reset-btn-contact {
+      background: #f5f5f5;
+      color: #555;
+    }
+    .reset-btn-contact:hover {
+      background: #e8e8e8;
+    }
+    .submit-btn-contact {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .submit-btn-contact:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    .back-btn-contact {
+      display: inline-block;
+      margin-bottom: 20px;
+      color: #667eea;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+    .back-btn-contact:hover {
+      color: #764ba2;
+    }
+  </style>
+</head>
+<body class="contact-page">
+  <div class="contact-container">
+    <a href="{{ url_for('user_home') }}" class="back-btn-contact">← Back to Dashboard</a>
+    <div class="contact-header">
+      <h2>Schedule an Appointment</h2>
+      <p>Fill out the form below and we'll get back to you soon</p>
+    </div>
+    {% if message %}
+      <div class="alert {% if success %}alert-success{% else %}alert-error{% endif %}">{{ message }}</div>
+    {% endif %}
+    {% if not success %}
+    <form method="POST">
+      <input type="text" name="name" placeholder="Full Name" required>
+      <input type="number" name="age" placeholder="Age" required>
+      <select name="gender" required>
+        <option value="">Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
+      <input type="tel" name="phone" placeholder="Phone Number" required>
+      <input type="text" name="problem" placeholder="Primary Problem" required>
+      <input style="grid-column: span 2" type="text" name="details" placeholder="Additional Details (optional)">
+      <div class="contact-buttons">
+        <button type="reset" class="reset-btn-contact">Reset</button>
+        <button type="submit" class="submit-btn-contact">Submit Request</button>
+      </div>
+    </form>
+    {% else %}
+    <div class="contact-buttons" style="justify-content:center; margin-top:20px">
+      <a href="{{ url_for('user_home') }}" class="submit-btn-contact">Back to Dashboard</a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
+
+

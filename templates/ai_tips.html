@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Tips - Chat with Dr. Sarah Chen</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .chat-page {
+      height: 100vh;
+      background-image: url('https://images.unsplash.com/photo-1674544362969-a4269ef0ea69?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8bWVkaWNhbCUyMHJvYm90fGVufDB8fDB8fHww&fm=jpg&q=60&w=3000');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+    .chat-page::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.3);
+    }
+    .chat-container {
+      width: min(900px, 95vw);
+      height: min(800px, 90vh);
+      background: rgba(255, 255, 255, 0.02); /* very translucent */
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      position: relative;
+      z-index: 1;
+      color: #1a1a1a;
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+      margin-bottom: 16px;
+    }
+    .chat-header h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      min-height: 0;
+      padding-right: 8px;
+      margin-bottom: 16px;
+      padding-top: 8px;
+    }
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-messages::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 10px;
+    }
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+    }
+    .message {
+      margin-bottom: 16px;
+      display: flex;
+      animation: fadeIn 0.3s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .message.user {
+      justify-content: flex-end;
+    }
+    .message.bot {
+      justify-content: flex-start;
+    }
+    .bubble {
+      padding: 14px 18px;
+      border-radius: 18px;
+      max-width: 75%;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+    .bubble.user {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      border-bottom-right-radius: 4px;
+    }
+    .bubble.bot {
+      background: rgba(255, 255, 255, 0.25);
+      color: #1a1a1a;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+    .bubble.error {
+      background: #fee;
+      color: #c33;
+      border: 1px solid #fcc;
+    }
+    .chat-input-form {
+      display: flex;
+      gap: 10px;
+      padding-top: 16px;
+      border-top: 2px solid rgba(0, 0, 0, 0.15);
+    }
+    .chat-input {
+      flex: 1;
+      padding: 14px 18px;
+      border: 2px solid rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.2);
+      color: #1a1a1a;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+    .chat-input::placeholder { color: #666666; }
+    .chat-input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    .send-btn {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+    }
+    .send-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    .back-link {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      color: #ffffff;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 10px;
+      transition: all 0.2s;
+      z-index: 2;
+      backdrop-filter: blur(10px);
+    }
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.35);
+      transform: translateY(-2px);
+    }
+    @media (max-width: 768px) {
+      .chat-container {
+        width: 95vw;
+        height: 90vh;
+        padding: 20px;
+      }
+      .back-link {
+        top: 15px;
+        left: 15px;
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body class="chat-page">
+  <a href="{{ url_for('user_home') }}" class="back-link">← Back to Dashboard</a>
+  <div class="chat-container">
+    <div class="chat-header">
+      <img src="{{ url_for('static', filename='img/icon.png') }}" alt="AI" style="width: 32px; height: 32px; border-radius: 8px;">
+      <h3>Chat with AI Doctor</h3>
+    </div>
+    <div class="chat-messages">
+      {% if user_message %}
+        <div class="message user">
+          <div class="bubble user">You: {{ user_message }}</div>
+        </div>
+      {% endif %}
+      {% if error_message %}
+        <div class="message bot">
+          <div class="bubble error">{{ error_message }}</div>
+        </div>
+      {% elif tips %}
+        <div class="message bot">
+          <div class="bubble bot">{{ tips }}</div>
+        </div>
+      {% else %}
+        <div class="message bot">
+          <div class="bubble bot">👋 Hello! I'm your AI health companion. How can I assist you today? Feel free to ask me anything about health, wellness, or preventive care.</div>
+        </div>
+      {% endif %}
+    </div>
+    <form method="POST" class="chat-input-form">
+      <input type="text" name="message" placeholder="Ask me anything about health..." class="chat-input" required>
+      <button type="submit" class="send-btn">Send</button>
+    </form>
+  </div>
+</body>
+</html>
+
+

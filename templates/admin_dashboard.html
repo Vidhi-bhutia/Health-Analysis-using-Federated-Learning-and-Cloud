@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    .admin-page {
+      min-height: 100vh;
+      background-image: url('https://plus.unsplash.com/premium_photo-1661423762612-e8fae810cb4b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG9zcGl0YWwlMjBwYXRpZW50c3xlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      position: relative;
+    }
+    .admin-page::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+    }
+    .admin-content {
+      position: relative;
+      z-index: 1;
+      padding: 40px 20px;
+    }
+    .admin-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .admin-header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 48px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 10px 0;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .admin-stats {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 16px;
+      padding: 20px 30px;
+      min-width: 150px;
+      text-align: center;
+    }
+    .stat-number {
+      font-family: 'Poppins', sans-serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 4px 0;
+    }
+    .stat-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #f0f0f0;
+      opacity: 0.9;
+      margin: 0;
+    }
+    .submissions-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+    .submissions-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .submissions-header h2 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0;
+    }
+    .table-wrapper {
+      overflow-x: auto;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Inter', sans-serif;
+    }
+    .table thead {
+      background: #f8f9fa;
+    }
+    .table th {
+      padding: 14px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 14px;
+      color: #495057;
+      border-bottom: 2px solid #dee2e6;
+    }
+    .table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid #e9ecef;
+      color: #495057;
+      font-size: 14px;
+    }
+    .table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    .status-tag {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+    }
+    .tag-new {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .tag-active {
+      background: #cfe2ff;
+      color: #084298;
+    }
+    .tag-scheduled {
+      background: #ffe69c;
+      color: #664d03;
+    }
+    .status-form {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .status-select {
+      padding: 8px 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      background: white;
+      color: #495057;
+      cursor: pointer;
+    }
+    .status-select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .btn-update {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-update:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+      font-family: 'Inter', sans-serif;
+    }
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+    .logout-btn-admin {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .logout-btn-admin:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body class="admin-page">
+  <a href="{{ url_for('logout') }}" class="logout-btn-admin">Logout</a>
+  <div class="admin-content">
+    <div class="admin-header">
+      <h1>Admin Dashboard</h1>
+    </div>
+    
+    {% if submissions %}
+    {% set new_count = submissions|selectattr('status', 'equalto', 'new')|list|length %}
+    {% set active_count = submissions|selectattr('status', 'equalto', 'active')|list|length %}
+    {% set scheduled_count = submissions|selectattr('status', 'equalto', 'scheduled')|list|length %}
+    
+    <div class="admin-stats">
+      <div class="stat-card">
+        <div class="stat-number">{{ submissions|length }}</div>
+        <div class="stat-label">Total Requests</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ new_count }}</div>
+        <div class="stat-label">New</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ active_count }}</div>
+        <div class="stat-label">Active</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ scheduled_count }}</div>
+        <div class="stat-label">Scheduled</div>
+      </div>
+    </div>
+    
+    <div class="submissions-container">
+      <div class="submissions-header">
+        <h2>Appointment Requests</h2>
+      </div>
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Phone</th>
+              <th>Problem</th>
+              <th>Details</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in submissions %}
+            <tr>
+              <td><strong>#{{ s.id }}</strong></td>
+              <td><strong>{{ s.name }}</strong></td>
+              <td>{{ s.age }}</td>
+              <td>{{ s.gender }}</td>
+              <td>{{ s.phone }}</td>
+              <td>{{ s.problem }}</td>
+              <td style="max-width: 200px; word-wrap: break-word;">{{ s.details or '-' }}</td>
+              <td>
+                {% if s.status == 'new' %}<span class="status-tag tag-new">New</span>
+                {% elif s.status == 'active' %}<span class="status-tag tag-active">Active</span>
+                {% elif s.status == 'scheduled' %}<span class="status-tag tag-scheduled">Scheduled</span>
+                {% endif %}
+              </td>
+              <td>
+                <form method="POST" action="{{ url_for('admin_update_status') }}" class="status-form">
+                  <input type="hidden" name="id" value="{{ s.id }}">
+                  <select name="status" class="status-select">
+                    <option value="new" {% if s.status == 'new' %}selected{% endif %}>New</option>
+                    <option value="active" {% if s.status == 'active' %}selected{% endif %}>Active</option>
+                    <option value="scheduled" {% if s.status == 'scheduled' %}selected{% endif %}>Scheduled</option>
+                    <option value="resolved">Resolved</option>
+                  </select>
+                  <button class="btn-update" type="submit">Update</button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% else %}
+    <div class="submissions-container">
+      <div class="empty-state">
+        <div class="empty-state-icon">📋</div>
+        <h3 style="font-family: 'Poppins', sans-serif; color: #333; margin: 0 0 8px 0;">No Active Requests</h3>
+        <p style="color: #666; margin: 0;">All appointment requests have been resolved.</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
+
+

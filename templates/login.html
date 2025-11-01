@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="auth-page" style="background-image: url('https://images.unsplash.com/photo-1579548122080-c35fd6820ecb?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8d2ViJTIwYmFja2dyb3VuZHxlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000'); background-size: cover; background-position: center;">
+  <div class="auth-split">
+    <div class="auth-left">
+      <h1>Welcome back</h1>
+      <p>Great to see you again. Pick up where you left off — predictions, AI tips, and appointments are just a click away.</p>
+    </div>
+    <div class="auth-right">
+      <div class="auth-card-glass">
+        <a href="{{ url_for('welcome') }}" class="back-btn">← Back</a>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <img src="{{ url_for('static', filename='img/icon.png') }}" alt="logo" style="width:36px;height:36px;border-radius:8px">
+          <div>
+            <div class="auth-title">Sign in to your health hub</div>
+            <div class="auth-subtitle">Predictions, AI guidance, and appointments — all in one place</div>
+          </div>
+        </div>
+        {% if message %}
+          <p class="auth-alert">{{ message }}</p>
+        {% endif %}
+        <form method="POST">
+          <input type="email" name="email" placeholder="Email" required>
+          <input type="password" name="password" placeholder="Password" required>
+          <select name="role" required>
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
+          <div class="auth-actions">
+            <a href="{{ url_for('signup') }}" class="btn auth-secondary">Create account</a>
+            <button type="submit" class="btn auth-primary">Login</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+

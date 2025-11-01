@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Disease Prediction Dashboard</title>
+  <title>User Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
-    .dashboard-page {
+    .user-dashboard-page {
       min-height: 100vh;
       background-image: url('https://plus.unsplash.com/premium_photo-1661423762612-e8fae810cb4b?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8aG9zcGl0YWwlMjBwYXRpZW50c3xlbnwwfHwwfHx8MA%3D%3D&fm=jpg&q=60&w=3000');
       background-size: cover;
@@ -16,22 +16,22 @@
       background-attachment: fixed;
       position: relative;
     }
-    .dashboard-page::before {
+    .user-dashboard-page::before {
       content: '';
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0.4);
     }
-    .dashboard-hero {
+    .dashboard-content {
       position: relative;
       z-index: 1;
       padding: 40px 20px;
     }
-    .dashboard-title {
+    .dashboard-header {
       text-align: center;
       margin-bottom: 40px;
     }
-    .dashboard-title h1 {
+    .dashboard-header h1 {
       font-family: 'Poppins', sans-serif;
       font-size: 48px;
       font-weight: 700;
@@ -39,74 +39,99 @@
       margin: 0 0 10px 0;
       text-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-    .disease-grid {
+    .dashboard-options {
       display: flex;
       justify-content: center;
-      gap: 16px;
+      gap: 24px;
       flex-wrap: nowrap;
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
     }
-    @media (max-width: 800px) {
-      .disease-grid {
-        flex-wrap: wrap;
-      }
-    }
-    .disease-card {
-      width: 160px;
-      height: 100px;
+    .dashboard-option {
+      width: 280px;
+      height: 180px;
       background: rgba(255, 255, 255, 0.15);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 16px;
+      padding: 24px;
       text-decoration: none;
       color: #ffffff;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       transition: all 0.3s;
       box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-      font-family: 'Poppins', sans-serif;
-      font-size: 16px;
-      font-weight: 600;
-      text-align: center;
     }
-    .disease-card:hover {
+    .dashboard-option:hover {
       background: rgba(255, 255, 255, 0.25);
       transform: translateY(-6px);
       box-shadow: 0 12px 40px rgba(0,0,0,0.3);
     }
-    .back-link-dash {
+    .dashboard-option h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+    }
+    .dashboard-option p {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      opacity: 0.9;
+      margin: 0;
+      text-align: center;
+    }
+    .logout-btn {
       display: inline-block;
-      margin-bottom: 20px;
+      margin-top: 30px;
+      padding: 10px 24px;
+      background: rgba(255, 255, 255, 0.2);
       color: #ffffff;
       text-decoration: none;
+      border-radius: 10px;
       font-family: 'Inter', sans-serif;
       font-weight: 500;
-      padding: 10px 20px;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 10px;
       transition: all 0.2s;
     }
-    .back-link-dash:hover {
+    .logout-btn:hover {
       background: rgba(255, 255, 255, 0.3);
+    }
+    @media (max-width: 1000px) {
+      .dashboard-options {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .dashboard-option {
+        width: 250px;
+      }
     }
   </style>
 </head>
-<body class="dashboard-page">
-  <div class="dashboard-hero">
-    <div style="text-align:center;margin-bottom:20px">
-      <a href="{{ url_for('user_home') }}" class="back-link-dash">← Back to Dashboard</a>
+<body class="user-dashboard-page">
+  <div class="dashboard-content">
+    <div class="dashboard-header">
+      <h1>Your Health Hub</h1>
     </div>
-    <div class="dashboard-title">
-      <h1>Your Health, Our Analysis</h1>
+    <div class="dashboard-options">
+      <a href="{{ url_for('dashboard') }}" class="dashboard-option">
+        <h3>🔮 Predict Chances</h3>
+        <p>Get AI-powered health risk predictions</p>
+      </a>
+      <a href="{{ url_for('ai_tips') }}" class="dashboard-option">
+        <h3>💬 AI Tips</h3>
+        <p>Chat with our AI doctor for health advice</p>
+      </a>
+      <a href="{{ url_for('contact') }}" class="dashboard-option">
+        <h3>📅 Contact Hospital</h3>
+        <p>Schedule appointments with ease</p>
+      </a>
     </div>
-    <div class="disease-grid">
-      {% for disease in diseases %}
-        <a href="{{ url_for('form', disease=disease) }}" class="disease-card">{{ disease }}</a>
-      {% endfor %}
+    <div style="text-align:center">
+      <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
     </div>
   </div>
 </body>
 </html>
+
+
