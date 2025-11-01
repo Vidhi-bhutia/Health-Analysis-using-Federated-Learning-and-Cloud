@@ -504,7 +504,7 @@ def ai_tips():
                 api_key = os.environ.get("GEMINI_API_KEY")
                 # Fallback API key if environment variable fails
                 if not api_key:
-                    api_key = "AIzaSyBpu_je7RrxMchxtbMM8q4ZXzt5Cjn0LMM"
+                    api_key = "INSERT_YOUR_API_KEY_HERE"
                 if not api_key:
                     error_message = "API key not configured. Please contact administrator."
                 else:
