@@ -8,7 +8,27 @@
       "phone": "9685856291",
       "problem": "Headache",
       "details": "",
-      "status": "new"
+      "status": "scheduled"
+    },
+    {
+      "id": 2,
+      "name": "Vidhi Bhutia",
+      "age": "22",
+      "gender": "Female",
+      "phone": "9685856291",
+      "problem": "Headache",
+      "details": "I have migraine and its increasing constantly",
+      "status": "resolved"
+    },
+    {
+      "id": 3,
+      "name": "Vidhi",
+      "age": "22",
+      "gender": "Female",
+      "phone": "9685856291",
+      "problem": "Headache",
+      "details": "I have migraine and its increasing constantly",
+      "status": "active"
     }
   ]
 }

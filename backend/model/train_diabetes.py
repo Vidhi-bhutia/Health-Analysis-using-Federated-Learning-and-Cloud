@@ -1,9 +1,7 @@
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import OneHotEncoder
 import os
 import json
+import pandas as pd
+from xgboost import XGBClassifier
 
 # Paths
 BASE_DIR = "data/hospital/"
@@ -14,41 +12,56 @@ os.makedirs(WEIGHT_DIR, exist_ok=True)
 HOSPITALS = ["Hospital A", "Hospital B", "Hospital C"]
 
 for hospital in HOSPITALS:
-    print(f"\n🏥 Training Diabetes Model for {hospital}...")
+	print(f"\n🏥 Training Diabetes XGBoost (gblinear) Model for {hospital}...")
 
-    # Load hospital-specific dataset
-    DATA_PATH = os.path.join(BASE_DIR, hospital, "diabetes.csv")
-    df = pd.read_csv(DATA_PATH)
+	# Load hospital-specific dataset
+	DATA_PATH = os.path.join(BASE_DIR, hospital, "diabetes.csv")
+	df = pd.read_csv(DATA_PATH)
 
-    # Separate features and target
-    X = df.drop(columns=["diabetes"])
-    y = df["diabetes"]
+	# Separate features and target
+	X = df.drop(columns=["diabetes"])
+	y = df["diabetes"].astype(int).values
 
-    # One-hot encode categorical columns
-    cat_cols = ["gender", "smoking_history"]
-    X_encoded = pd.get_dummies(X, columns=cat_cols, drop_first=False)
+	# One-hot encode categorical columns
+	cat_cols = ["gender", "smoking_history"]
+	X_df = pd.get_dummies(X, columns=cat_cols, drop_first=False)
 
-    # Train/Test split
-    X_train, X_test, y_train, y_test = train_test_split(
-        X_encoded, y, test_size=0.2, random_state=42, stratify=y
-    )
+	# Class imbalance handling
+	pos = (y == 1).sum()
+	neg = (y == 0).sum()
+	scale_pos_weight = float(neg / pos) if pos > 0 else 1.0
 
-    # Logistic Regression
-    model = LogisticRegression(max_iter=200, solver="liblinear", class_weight="balanced")
-    model.fit(X_train, y_train)
+	# XGBoost linear booster tuned
+	model = XGBClassifier(
+		booster="gblinear",
+		objective="binary:logistic",
+		eval_metric="logloss",
+		learning_rate=0.05,
+		n_estimators=300,
+		reg_alpha=0.0,
+		reg_lambda=0.1,
+		lambda_bias=0.0,
+		updater="shotgun",
+		scale_pos_weight=scale_pos_weight,
+		random_state=42,
+		n_jobs=-1,
+	)
+	model.fit(X_df.values, y)
 
-    # Save weights in consistent JSON format
-    weights = {
-        "model": "logistic_regression",
-        "hospital": hospital,
-        "features": X_encoded.columns.tolist(),
-        "coef": model.coef_.tolist(),
-        "intercept": model.intercept_.tolist(),
-        "classes": model.classes_.tolist()
-    }
+	# Save weights.json compatible with FedAvg (nested)
+	coef_list = model.coef_.ravel().tolist() if hasattr(model, "coef_") else [0.0] * X_df.shape[1]
+	intercept_val = float(getattr(model, "intercept_", 0.0))
+	weights = {
+		"model": "xgboost_gblinear",
+		"hospital": hospital,
+		"features": X_df.columns.tolist(),
+		"coef": [coef_list],
+		"intercept": [intercept_val],
+		"classes": [0, 1],
+		"num_samples": int(len(y)),
+	}
+	file_path = os.path.join(WEIGHT_DIR, f"{hospital.lower().replace(' ', '_')}_weights.json")
+	with open(file_path, "w") as f:
+		json.dump(weights, f, indent=4)
 
-    file_path = os.path.join(WEIGHT_DIR, f"{hospital.lower().replace(' ', '_')}_weights.json")
-    with open(file_path, "w") as f:
-        json.dump(weights, f, indent=4)
-
-    print(f"💾 Weights saved: {file_path}")
+	print(f"💾 Weights saved: {file_path}")

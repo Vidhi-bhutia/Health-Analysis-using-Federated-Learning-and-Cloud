@@ -1,11 +1,13 @@
 # 🏥 Health Analysis System using Federated Learning
 
-A health risk prediction system that leverages **Federated Learning** to train models across multiple hospitals while maintaining data privacy. The system uses federated averaging (FedAvg) to aggregate models from different hospitals and provides a web interface for disease prediction, AI-powered health tips, and appointment management.
+A health risk prediction system that leverages **Federated Learning** to train models across multiple hospitals while maintaining data privacy. The system now uses **XGBoost (gblinear booster)** per hospital, exporting linear model weights (`coef`, `intercept`) to JSON, and applies **FedAvg** over these weights at prediction time. It provides a web interface for disease prediction, AI-powered health tips, and appointment management.
 
 ## ✨ Features
 
 - **Multi-disease Prediction**: 5 diseases (Anemia, Asthma, Breast Cancer, Diabetes, Stroke)
-- **Federated Learning**: Aggregates models from 3 hospitals without sharing raw patient data
+- **Federated Learning**: Privacy-preserving setup across 3 hospitals
+  - **XGBoost (gblinear)**: Produces linear weights compatible with FedAvg
+  - **FedAvg Aggregation**: Weighted by hospital sample counts when available (`num_samples`)
 - **Web Application**: Modern UI with user authentication, prediction forms, and admin dashboard
 - **AI Health Tips**: Google Gemini API integration for health advice chatbot
 - **Appointment Management**: Contact form submissions with admin status tracking
@@ -53,7 +55,7 @@ A health risk prediction system that leverages **Federated Learning** to train m
    # Split data for hospitals
    python backend/constants/split.py
    
-   # Train models
+   # Train XGBoost gblinear models per disease & hospital (saves *_weights.json)
    python backend/model/train_anemia.py
    python backend/model/train_asthma.py
    python backend/model/train_breast_cancer.py
@@ -65,24 +67,23 @@ A health risk prediction system that leverages **Federated Learning** to train m
    ```bash
    python app.py
    ```
-   
    Open browser: **http://127.0.0.1:5000**
 
 ## 📁 Project Structure
 
 ```
-├── app.py                          # Main Flask application
+├── app.py                          # Main Flask application (FedAvg over weights)
 ├── backend/
 │   ├── constants/
 │   │   └── split.py               # Data splitting utility
 │   ├── federated_learning/
-│   │   └── fedavg_simulator.py    # FedAvg simulation
+│   │   └── fedavg_simulator.py    # FedAvg simulation (optional)
 │   └── model/
-│       └── train_*.py             # Model training scripts
+│       └── train_*.py             # Model training scripts (XGBoost gblinear -> weights.json)
 ├── data/
 │   ├── raw/                       # Raw CSV datasets
 │   ├── hospital/                  # Hospital-split data
-│   ├── weights/                   # Trained model weights
+│   ├── weights/                   # Per-disease per-hospital *_weights.json
 │   ├── users.json                 # User credentials
 │   └── contacts.json              # Appointment submissions
 ├── static/
@@ -91,48 +92,22 @@ A health risk prediction system that leverages **Federated Learning** to train m
 └── requirements.txt                # Dependencies
 ```
 
-## 🔑 Authentication
-
-- **Admin Code**: `VSHospital` (required for admin signup)
-- **Roles**: User, Admin
-- **Storage**: JSON file (`data/users.json`)
-
-## 💻 Usage
-
-### User Workflow
-
-1. **Welcome** → Login/Signup
-2. **Signup** → Create account (Admin code: `VSHospital`)
-3. **Login** → Select role and enter credentials
-4. **Dashboard** → Choose:
-   - **Predict Chances**: Select disease → Fill form → View results
-   - **AI Tips**: Chat with AI doctor
-   - **Contact Hospital**: Schedule appointment
-
-### Admin Workflow
-
-1. **Login** as Admin
-2. **Dashboard** → View appointment requests
-3. **Update Status** → Mark as New/Active/Scheduled/Resolved
-
 ## 🧠 Federated Learning
 
-The system simulates cloud-based federated averaging locally:
+- Each hospital trains its own **XGBoost (gblinear)** model.
+- We export linear parameters to JSON: `features`, `coef`, `intercept`, `classes`, and `num_samples`.
+- At inference, the app loads all hospital weights and applies **FedAvg** weighted by `num_samples` when present (fallback: equal weights).
+- Prediction uses the standard logistic function on the aggregated weights.
 
-1. **Local Training**: Each hospital trains model on its own data
-2. **Weight Sharing**: Only model weights are shared (not raw data)
-3. **Aggregation**: FedAvg algorithm combines weights from all hospitals
-4. **Prediction**: Uses aggregated model for predictions
+## 💡 Notes on Features and Forms
 
-**FedAvg Formula**:
-```
-w_global = (w_A + w_B + w_C) / 3
-```
+- Forms map to the feature list in `hospital_a_weights.json`. For Diabetes, `gender` and `smoking_history` are one-hot encoded to match training.
+- If datasets/columns change, retrain so weights contain the updated `features` list; forms and inference will align automatically.
 
 ## 🛠️ Technology Stack
 
 - **Backend**: Flask 3.0.2
-- **ML**: scikit-learn, pandas, numpy
+- **ML**: XGBoost (gblinear), scikit-learn, pandas, numpy
 - **AI**: google-generativeai (Gemini API)
 - **Frontend**: HTML5/CSS3, JavaScript
 
