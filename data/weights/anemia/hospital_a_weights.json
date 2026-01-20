@@ -1,5 +1,5 @@
 {
-  "model": "logistic_regression",
+  "model": "xgboost",
   "hospital": "Hospital A",
   "features": [
     "Gender",

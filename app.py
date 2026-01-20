@@ -2,6 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask import session
 import os, json
 import google.generativeai as genai
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 try:
 	from backend.federated_learning.fedavg_simulator import FedAvgSimulator
 except ImportError:
@@ -9,13 +14,21 @@ except ImportError:
 	FedAvgSimulator = None
 	print("Warning: FedAvg simulator not available, using simple averaging")
 
+# Import database module
+from database import (
+	init_db, get_all_users, get_user_by_email, add_user, user_exists,
+	get_all_contacts, get_active_contacts, add_contact, update_contact_status
+)
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
+
+# Initialize database on startup
+init_db()
 
 # Available diseases and corresponding folder names
 DISEASES = {
 	"Anemia": "anemia",
-	"Asthma": "asthma",
 	"Breast Cancer": "breast_cancer",
 	"Diabetes": "diabetes",
 	"Stroke": "stroke"
@@ -24,7 +37,6 @@ DISEASES = {
 # Optional default thresholds (can be tuned per disease)
 DEFAULT_THRESHOLDS = {
 	"anemia": 0.5,
-	"asthma": 0.5,
 	"breast_cancer": 0.5,
 	"diabetes": 0.5,
 	"stroke": 0.5,
@@ -123,41 +135,7 @@ def map_form_inputs_to_features(disease_folder, form_inputs):
 	# Disease-specific mappings
 	disease_name = disease_folder.lower()
 
-	if disease_name == "asthma":
-		age = int(form_inputs.get("age", 0))
-		if 0 <= age <= 9:
-			feature_dict["Age_0-9"] = 1
-		elif 10 <= age <= 19:
-			feature_dict["Age_10-19"] = 1
-		elif 20 <= age <= 24:
-			feature_dict["Age_20-24"] = 1
-		elif 25 <= age <= 59:
-			feature_dict["Age_25-59"] = 1
-		else:
-			feature_dict["Age_60+"] = 1
-		gender = form_inputs.get("gender", "").lower()
-		if gender in ["female", "f"]:
-			feature_dict["Gender_Female"] = 1
-		elif gender in ["male", "m"]:
-			feature_dict["Gender_Male"] = 1
-		symptom_map = {
-			"tiredness": "Tiredness",
-			"dry_cough": "Dry-Cough",
-			"difficulty_in_breathing": "Difficulty-in-Breathing",
-			"sore_throat": "Sore-Throat",
-			"pains": "Pains",
-			"nasal_congestion": "Nasal-Congestion",
-			"runny_nose": "Runny-Nose",
-		}
-		for key, feat in symptom_map.items():
-			if form_inputs.get(key) in ["1", "yes", "true", "on"]:
-				feature_dict[feat] = 1
-		if form_inputs.get("none_sympton") in ["1", "yes", "true", "on"]:
-			feature_dict["None_Sympton"] = 1
-		if form_inputs.get("none_experiencing") in ["1", "yes", "true", "on"]:
-			feature_dict["None_Experiencing"] = 1
-
-	elif disease_name == "diabetes":
+	if disease_name == "diabetes":
 		age = float(form_inputs.get("age", 0))
 		feature_dict["age"] = age
 		feature_dict["hypertension"] = float(form_inputs.get("hypertension", 0))
@@ -288,48 +266,11 @@ def predict_with_averaged_model(disease_folder, feature_vector, use_fedavg_simul
 		"fedavg_used": use_fedavg_simulator,
 	}
 
-USERS_JSON_PATH = os.path.join("data", "users.json")
-CONTACTS_JSON_PATH = os.path.join("data", "contacts.json")
-
-
-def load_users():
-	if not os.path.exists(USERS_JSON_PATH):
-		os.makedirs(os.path.dirname(USERS_JSON_PATH), exist_ok=True)
-		with open(USERS_JSON_PATH, "w") as f:
-			json.dump({"users": []}, f)
-		return []
-	with open(USERS_JSON_PATH, "r") as f:
-		try:
-			data = json.load(f)
-		except json.JSONDecodeError:
-			data = {"users": []}
-	return data.get("users", [])
-
-
-def save_users(users):
-	os.makedirs(os.path.dirname(USERS_JSON_PATH), exist_ok=True)
-	with open(USERS_JSON_PATH, "w") as f:
-		json.dump({"users": users}, f, indent=2)
-
-
-def load_contacts():
-	if not os.path.exists(CONTACTS_JSON_PATH):
-		os.makedirs(os.path.dirname(CONTACTS_JSON_PATH), exist_ok=True)
-		with open(CONTACTS_JSON_PATH, "w") as f:
-			json.dump({"submissions": []}, f)
-		return []
-	with open(CONTACTS_JSON_PATH, "r") as f:
-		try:
-			data = json.load(f)
-		except json.JSONDecodeError:
-			data = {"submissions": []}
-	return data.get("submissions", [])
-
-
-def save_contacts(submissions):
-	os.makedirs(os.path.dirname(CONTACTS_JSON_PATH), exist_ok=True)
-	with open(CONTACTS_JSON_PATH, "w") as f:
-		json.dump({"submissions": submissions}, f, indent=2)
+# ============ User and Contact Functions (Using SQLite Database) ============
+# Note: The actual database functions are imported from database.py
+# Legacy JSON paths kept for reference during migration
+# USERS_JSON_PATH = os.path.join("data", "users.json")
+# CONTACTS_JSON_PATH = os.path.join("data", "contacts.json")
 
 
 @app.route("/")
@@ -350,9 +291,9 @@ def login():
 		password = request.form.get("password", "")
 		role = request.form.get("role", "user")
 
-		users = load_users()
-		match = next((u for u in users if u.get("email") == email and u.get("password") == password and u.get("role") == role), None)
-		if match:
+		# Use database function to get user
+		user = get_user_by_email(email)
+		if user and user.get("password") == password and user.get("role") == role:
 			session["user"] = {"email": email, "role": role}
 			if role == "admin":
 				return redirect(url_for("admin_home"))
@@ -379,12 +320,11 @@ def signup():
 		elif role == "admin" and admin_code != "VSHospital":
 			message = "Invalid admin code."
 		else:
-			users = load_users()
-			if any(u.get("email") == email for u in users):
+			# Use database functions
+			if user_exists(email):
 				message = "Email already registered. Please login."
 			else:
-				users.append({"email": email, "password": password, "role": role})
-				save_users(users)
+				add_user(email, password, role)
 				success = True
 				message = "Signup successful. You can now login."
 
@@ -413,7 +353,8 @@ def user_home():
 def admin_home():
 	if not require_role("admin"):
 		return redirect(url_for("login"))
-	submissions = [s for s in load_contacts() if s.get("status") != "resolved"]
+	# Use database function to get active contacts
+	submissions = get_active_contacts()
 	return render_template("admin_dashboard.html", submissions=submissions)
 
 
@@ -423,12 +364,8 @@ def admin_update_status():
 		return redirect(url_for("login"))
 	submission_id = request.form.get("id")
 	new_status = request.form.get("status")
-	submissions = load_contacts()
-	for s in submissions:
-		if str(s.get("id")) == str(submission_id):
-			s["status"] = new_status
-			break
-	save_contacts(submissions)
+	# Use database function to update status
+	update_contact_status(int(submission_id), new_status)
 	return redirect(url_for("admin_home"))
 
 
@@ -449,19 +386,8 @@ def contact():
 		if not name or not age or not gender or not phone or not problem:
 			message = "Please fill all required fields."
 		else:
-			submissions = load_contacts()
-			next_id = (max([s.get("id", 0) for s in submissions]) + 1) if submissions else 1
-			submissions.append({
-				"id": next_id,
-				"name": name,
-				"age": age,
-				"gender": gender,
-				"phone": phone,
-				"problem": problem,
-				"details": details,
-				"status": "new"
-			})
-			save_contacts(submissions)
+			# Use database function to add contact
+			add_contact(name, age, gender, phone, problem, details)
 			success = True
 			message = "Submitted successfully. We'll contact you soon."
 
@@ -481,13 +407,10 @@ def ai_tips():
 		user_message = request.form.get("message", "").strip()
 		if user_message:
 			try:
-				# Configure Gemini API
+				# Configure Gemini API from environment variable (loaded from .env)
 				api_key = os.environ.get("GEMINI_API_KEY")
-				# Fallback API key if environment variable fails
 				if not api_key:
-					api_key = "YOUR-API-KEY-HERE"
-				if not api_key:
-					error_message = "API key not configured. Please contact administrator."
+					error_message = "API key not configured. Please set GEMINI_API_KEY in .env file."
 				else:
 					genai.configure(api_key=api_key)
 					model = genai.GenerativeModel('gemini-2.0-flash')
@@ -520,20 +443,7 @@ def get_user_friendly_fields(disease_folder):
 	"""Generate user-friendly form fields based on disease type"""
 	disease_name = disease_folder.lower()
 	
-	if disease_name == "asthma":
-		return [
-			{"name": "age", "type": "number", "label": "Age", "required": True, "placeholder": "Enter your age"},
-			{"name": "gender", "type": "select", "label": "Gender", "required": True, 
-			 "options": [("", "Select Gender"), ("Male", "Male"), ("Female", "Female")]},
-			{"name": "tiredness", "type": "checkbox", "label": "Tiredness"},
-			{"name": "dry_cough", "type": "checkbox", "label": "Dry Cough"},
-			{"name": "difficulty_in_breathing", "type": "checkbox", "label": "Difficulty in Breathing"},
-			{"name": "sore_throat", "type": "checkbox", "label": "Sore Throat"},
-			{"name": "pains", "type": "checkbox", "label": "Pains"},
-			{"name": "nasal_congestion", "type": "checkbox", "label": "Nasal Congestion"},
-			{"name": "runny_nose", "type": "checkbox", "label": "Runny Nose"},
-		]
-	elif disease_name == "diabetes":
+	if disease_name == "diabetes":
 		return [
 			{"name": "age", "type": "number", "label": "Age", "required": True, "placeholder": "Enter age"},
 			{"name": "gender", "type": "select", "label": "Gender", "required": True,

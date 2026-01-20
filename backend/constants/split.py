@@ -9,7 +9,6 @@ HOSPITALS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../d
 # Disease files and their extensions
 DISEASE_FILES = {
     'anemia': 'anemia.csv',
-    'asthma': 'asthma.csv',
     'breast_cancer': 'breast_cancer.csv',
     'diabetes': 'diabetes.csv',
     'stroke': 'stroke.csv',

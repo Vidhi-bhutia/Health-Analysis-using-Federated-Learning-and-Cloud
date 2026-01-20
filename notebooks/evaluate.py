@@ -38,11 +38,6 @@ DISEASES = {
 		"target": "Result",
 		"preprocess": None,
 	},
-	"asthma": {
-		"raw_file": "asthma.csv",
-		"target": "Asthma",
-		"preprocess": "asthma_binary",
-	},
 	"breast_cancer": {
 		"raw_file": "breast_cancer.csv",
 		"target": "diagnosis",
@@ -131,11 +126,6 @@ def predict_from_weights(weights: Dict, X_df: pd.DataFrame) -> np.ndarray:
 def preprocess_dataset(disease: str, df: pd.DataFrame) -> Tuple[pd.DataFrame, np.ndarray]:
 	info = DISEASES[disease]
 	target = info["target"]
-	if info["preprocess"] == "asthma_binary":
-		df[target] = df[["Severity_Mild", "Severity_Moderate"]].max(axis=1)
-		X_df = df.drop(columns=["Severity_Mild", "Severity_Moderate", "Severity_None", target])
-		y = df[target].astype(int).values
-		return X_df, y
 	if info["preprocess"] == "diabetes_onehot":
 		y = df[target].astype(int).values
 		X = df.drop(columns=[target])

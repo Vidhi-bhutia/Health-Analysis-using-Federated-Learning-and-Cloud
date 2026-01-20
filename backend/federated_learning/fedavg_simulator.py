@@ -202,7 +202,7 @@ def simulate_federated_averaging(disease_folder: str, simulate_delay: bool = Fal
     Convenience function to simulate federated averaging
     
     Args:
-        disease_folder: Disease folder name (e.g., "diabetes", "asthma")
+        disease_folder: Disease folder name (e.g., "diabetes", "anemia")
         simulate_delay: Whether to simulate network delays
     
     Returns:
